@@ -1,5 +1,5 @@
 function importar() {
-  fetch("/download-apps/assets/templates/tags.html") //ia
+  fetch("/mi-page/assets/templates/tags.html") //ia
     .then((res) => res.text()) //ia
     .then((data) => {
       //ia

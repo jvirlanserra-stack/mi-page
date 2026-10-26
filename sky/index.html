@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi cielo 🌌</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+#cielo {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(#168be0, #9cddff);
+    transition: background 3s ease;
+}
+
+#sol, #luna {
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    transition: left 3s ease, top 3s ease, opacity 2s ease;
+}
+
+#sol {
+    background: #fff176;
+    box-shadow: 0 0 50px #fff176;
+}
+
+#luna {
+    display: none;
+    background: #f5f5f5;
+    box-shadow: 0 0 30px #ffffff80;
+}
+
+.estrella {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    animation: brillar 2s infinite alternate;
+}
+
+@keyframes brillar {
+    from { opacity: 0.2; }
+    to { opacity: 1; }
+}
+
+.nube {
+    position: absolute;
+    width: 120px;
+    height: 40px;
+    background: white;
+    border-radius: 50px;
+    opacity: 0.8;
+    box-shadow:
+        20px -15px 0 5px white,
+        50px -25px 0 10px white;
+}
+
+#informacion {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(92%, 420px);
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 20px;
+    color: white;
+    text-align: center;
+    background: #00000035;
+    backdrop-filter: blur(10px);
+    border: 1px solid #ffffff40;
+    border-radius: 18px;
+}
+
+#estado {
+    margin-top: 10px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+#tiempo {
+    margin-top: 8px;
+    font-size: 13px;
+}
+
+#ubicacionManual {
+    display: none;
+    margin-top: 15px;
+}
+
+input {
+    display: block;
+    width: 100%;
+    margin-top: 9px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+}
+
+button {
+    margin-top: 12px;
+    padding: 11px 16px;
+    border: 1px solid white;
+    border-radius: 22px;
+    color: white;
+    background: #ffffff25;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    background: #ffffff45;
+}
+
+#botonUbicacion {
+    margin-right: 5px;
+}
+
+#nota {
+    margin-top: 10px;
+    font-size: 11px;
+    opacity: 0.8;
+    line-height: 1.4;
+}
+</style>
+</head>
+
+<body>
+
+<div id="cielo">
+    <div id="sol"></div>
+    <div id="luna"></div>
+    <div id="estrellas"></div>
+    <div id="nubes"></div>
+
+    <section id="informacion">
+        <h2>Tu cielo 🌌</h2>
+
+        <div id="estado">
+            Intentando obtener tu ubicación...
+        </div>
+
+        <div id="tiempo">
+            Preparando el cielo...
+        </div>
+
+        <div id="ubicacionManual">
+            <p>📍 Introduce las coordenadas del lugar</p>
+
+            <input
+                id="latitudInput"
+                type="number"
+                step="any"
+                min="-90"
+                max="90"
+                placeholder="Latitud (ej. 35.6762)"
+            >
+
+            <input
+                id="longitudInput"
+                type="number"
+                step="any"
+                min="-180"
+                max="180"
+                placeholder="Longitud (ej. 139.6503)"
+            >
+
+            <button onclick="usarCoordenadas()">
+                Mostrar mi cielo 🌌
+            </button>
+        </div>
+
+        <button id="botonUbicacion" onclick="obtenerUbicacion()">
+            Usar mi ubicación 📍
+        </button>
+
+        <button onclick="mostrarCampos()">
+            Introducir coordenadas
+        </button>
+
+        <div id="nota">
+            La ubicación se utiliza para consultar la hora local
+            y las condiciones meteorológicas del lugar.
+        </div>
+    </section>
+</div>
+
+<script>
+const cielo = document.getElementById("cielo");
+const sol = document.getElementById("sol");
+const luna = document.getElementById("luna");
+const estrellas = document.getElementById("estrellas");
+const nubes = document.getElementById("nubes");
+
+let latitud = null;
+let longitud = null;
+let zonaHoraria = null;
+let coberturaNubes = 0;
+let temporizadorMeteorologico = null;
+let solicitudActual = 0;
+
+/* Crear estrellas */
+function crearEstrellas() {
+    estrellas.innerHTML = "";
+
+    for (let i = 0; i < 160; i++) {
+        const estrella = document.createElement("div");
+
+        estrella.className = "estrella";
+        estrella.style.left = Math.random() * 100 + "%";
+        estrella.style.top = Math.random() * 85 + "%";
+        estrella.style.animationDelay = Math.random() * 3 + "s";
+        estrella.style.opacity = "0";
+
+        estrellas.appendChild(estrella);
+    }
+}
+
+/* Dibujar nubes según la nubosidad real */
+function dibujarNubes() {
+    nubes.innerHTML = "";
+
+    const cantidad = Math.round(coberturaNubes / 100 * 12);
+
+    for (let i = 0; i < cantidad; i++) {
+        const nube = document.createElement("div");
+
+        nube.className = "nube";
+        nube.style.left = Math.random() * 85 + "%";
+        nube.style.top = (10 + Math.random() * 65) + "%";
+        nube.style.transform = "scale(" +
+            (0.6 + Math.random() * 0.8) + ")";
+
+        nubes.appendChild(nube);
+    }
+}
+
+/* Mostrar los campos manuales */
+function mostrarCampos() {
+    document.getElementById("ubicacionManual").style.display = "block";
+
+    document.getElementById("estado").textContent =
+        "Introduce la latitud y longitud del lugar que quieras ver.";
+}
+
+/* Solicitar la ubicación del dispositivo */
+function obtenerUbicacion() {
+    if (!navigator.geolocation) {
+        preguntarUbicacion();
+        return;
+    }
+
+    document.getElementById("estado").textContent =
+        "Esperando permiso de ubicación...";
+
+    navigator.geolocation.getCurrentPosition(
+        async posicion => {
+            latitud = posicion.coords.latitude;
+            longitud = posicion.coords.longitude;
+
+            document.getElementById("ubicacionManual").style.display = "none";
+
+            document.getElementById("estado").textContent =
+                "Ubicación obtenida. Consultando el cielo...";
+
+            await consultarMeteorologia();
+        },
+
+        error => {
+            preguntarUbicacion();
+        },
+
+        {
+            enableHighAccuracy: false,
+            timeout: 12000,
+            maximumAge: 300000
+        }
+    );
+}
+
+/* Mostrar campos si falla la ubicación */
+function preguntarUbicacion() {
+    document.getElementById("ubicacionManual").style.display = "block";
+
+    document.getElementById("estado").textContent =
+        "No pudimos detectar tu ubicación. Introduce tus coordenadas.";
+}
+
+/* Utilizar coordenadas manuales */
+async function usarCoordenadas() {
+    const lat = Number(
+        document.getElementById("latitudInput").value
+    );
+
+    const lon = Number(
+        document.getElementById("longitudInput").value
+    );
+
+    if (
+        document.getElementById("latitudInput").value.trim() === "" ||
+        document.getElementById("longitudInput").value.trim() === "" ||
+        !Number.isFinite(lat) ||
+        !Number.isFinite(lon) ||
+        lat < -90 || lat > 90 ||
+        lon < -180 || lon > 180
+    ) {
+        document.getElementById("estado").textContent =
+            "Coordenadas no válidas. Latitud: -90 a 90; longitud: -180 a 180.";
+        return;
+    }
+
+    latitud = lat;
+    longitud = lon;
+
+    document.getElementById("estado").textContent =
+        "Buscando la hora y el tiempo meteorológico del lugar...";
+
+    await consultarMeteorologia();
+}
+
+/* Consultar meteorología y zona horaria */
+async function consultarMeteorologia() {
+    if (latitud === null || longitud === null) return;
+
+    const idSolicitud = ++solicitudActual;
+
+    try {
+        const url =
+            "https://api.open-meteo.com/v1/forecast" +
+            "?latitude=" + latitud +
+            "&longitude=" + longitud +
+            "&current=cloud_cover,weather_code,is_day" +
+            "&timezone=auto";
+
+        const respuesta = await fetch(url);
+
+        if (!respuesta.ok) {
+            throw new Error("No se pudieron cargar los datos");
+        }
+
+        const datos = await respuesta.json();
+
+        // Ignorar respuestas antiguas si se han cambiado las coordenadas.
+        if (idSolicitud !== solicitudActual) return;
+
+        zonaHoraria = datos.timezone;
+        coberturaNubes = datos.current.cloud_cover ?? 0;
+
+        dibujarNubes();
+        actualizarCielo();
+
+        const codigo = datos.current.weather_code;
+
+        const condiciones = {
+            0: "Despejado ☀️",
+            1: "Mayormente despejado 🌤️",
+            2: "Parcialmente nublado ⛅",
+            3: "Nublado ☁️",
+            45: "Niebla 🌫️",
+            48: "Niebla 🌫️",
+            51: "Llovizna 🌦️",
+            53: "Llovizna 🌦️",
+            55: "Llovizna intensa 🌧️",
+            61: "Lluvia 🌧️",
+            63: "Lluvia 🌧️",
+            65: "Lluvia intensa 🌧️",
+            71: "Nieve ❄️",
+            73: "Nieve ❄️",
+            75: "Nieve intensa ❄️",
+            80: "Chubascos 🌦️",
+            81: "Chubascos 🌧️",
+            82: "Chubascos fuertes 🌧️",
+            95: "Tormenta ⛈️"
+        };
+
+        document.getElementById("estado").textContent =
+            (condiciones[codigo] || "Condiciones variables") +
+            " · Nubosidad: " + coberturaNubes + "%";
+
+        document.getElementById("ubicacionManual").style.display = "none";
+
+        if (temporizadorMeteorologico) {
+            clearInterval(temporizadorMeteorologico);
+        }
+
+        temporizadorMeteorologico = setInterval(
+            consultarMeteorologia,
+            600000
+        );
+
+    } catch (error) {
+        document.getElementById("estado").textContent =
+            "No se pudieron cargar los datos meteorológicos. Comprueba Internet.";
+
+        // Aun sin Internet, mostrar el cielo usando la hora del dispositivo.
+        actualizarCielo();
+    }
+}
+
+/* Obtener la hora de la ubicación seleccionada */
+function obtenerHoraLocal() {
+    const ahora = new Date();
+
+    if (!zonaHoraria) {
+        return {
+            hora: ahora.getHours(),
+            minutos: ahora.getMinutes(),
+            fecha: ahora.toLocaleDateString("es-ES")
+        };
+    }
+
+    const partes = new Intl.DateTimeFormat("en-GB", {
+        timeZone: zonaHoraria,
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23"
+    }).formatToParts(ahora);
+
+    const hora = Number(
+        partes.find(p => p.type === "hour").value
+    );
+
+    const minutos = Number(
+        partes.find(p => p.type === "minute").value
+    );
+
+    const fecha = new Intl.DateTimeFormat("es-ES", {
+        timeZone: zonaHoraria,
+        dateStyle: "short"
+    }).format(ahora);
+
+    return { hora, minutos, fecha };
+}
+
+/* Cambiar el cielo según la hora local de las coordenadas */
+function actualizarCielo() {
+    const local = obtenerHoraLocal();
+
+    const hora = local.hora + local.minutos / 60;
+
+    const noche = hora < 6 || hora >= 20;
+    const amanecer = hora >= 6 && hora < 9;
+    const atardecer = hora >= 17 && hora < 20;
+
+    if (noche) {
+        cielo.style.background =
+            "linear-gradient(#020817, #102d59)";
+    } else if (amanecer) {
+        cielo.style.background =
+            "linear-gradient(#699bd0, #f4c6a5)";
+    } else if (atardecer) {
+        cielo.style.background =
+            "linear-gradient(#416d9e, #e9a17d)";
+    } else {
+        cielo.style.background =
+            "linear-gradient(#168be0, #9cddff)";
+    }
+
+    // Posición visual aproximada del Sol durante el día.
+    const progresoSol = Math.max(
+        0,
+        Math.min(1, (hora - 6) / 12)
+    );
+
+    const xSol = 5 + progresoSol * 85;
+    const ySol = 72 - Math.sin(progresoSol * Math.PI) * 55;
+
+    sol.style.left = xSol + "%";
+    sol.style.top = ySol + "%";
+    sol.style.display = noche ? "none" : "block";
+
+    // La Luna aparece de noche.
+    const xLuna = 90 - progresoSol * 80;
+
+    luna.style.left = xLuna + "%";
+    luna.style.top = "25%";
+    luna.style.display = noche ? "block" : "none";
+
+    // Las estrellas aparecen de noche.
+    document.querySelectorAll(".estrella").forEach(estrella => {
+        estrella.style.opacity = noche
+            ? (0.3 + Math.random() * 0.7)
+            : 0;
+    });
+
+    const horaTexto =
+        String(local.hora).padStart(2, "0") + ":" +
+        String(local.minutos).padStart(2, "0");
+
+    document.getElementById("tiempo").textContent =
+        "Hora local: " + horaTexto +
+        " · Fecha: " + local.fecha +
+        (zonaHoraria ? " · " + zonaHoraria : "");
+}
+
+/* Inicialización */
+crearEstrellas();
+actualizarCielo();
+
+window.addEventListener("load", () => {
+    obtenerUbicacion();
+});
+
+// Actualizar la hora mostrada cada minuto.
+setInterval(actualizarCielo, 60000);
+</script>
+
+</body>
+</html>
