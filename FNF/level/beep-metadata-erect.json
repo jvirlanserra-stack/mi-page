@@ -1,0 +1,49 @@
+{
+ "version": "2.2.4",
+ "songName": "Beep",
+ "artist": "Lucas",
+ "offsets": { },
+ "playData": {
+  "difficulties": [
+   "easy",
+   "erect",
+   "nightmare"
+  ],
+  "characters": {
+   "player": "monster",
+   "girlfriend": "monster",
+   "opponent": "monster",
+   "opponentVocals": [
+    "dad"
+   ],
+   "playerVocals": [
+    "bf"
+   ]
+  },
+  "stage": "phillyStreetsErect",
+  "noteStyle": "funkin",
+  "ratings": {
+   "easy": 0,
+   "erect": 0,
+   "nightmare": 0
+  },
+  "album": "volume1",
+  "stickerPack": "default",
+  "previewEnd": 0
+ },
+ "generatedBy": "Friday Night Funkin' - v0.8.6",
+ "timeChanges": [
+  {
+   "t": 0,
+   "b": 0,
+   "bpm": 101,
+   "bt": [4, 4, 4, 4]
+  },
+  {
+   "t": 21283.2116,
+   "b": 35.8267,
+   "bpm": 101,
+   "bt": [4, 4, 4, 4]
+  }
+ ]
+}
