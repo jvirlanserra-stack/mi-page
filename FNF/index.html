@@ -1,0 +1,29 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Abrir nivel FNF</title>
+</head>
+<body>
+
+    <h2>Friday Night Funkin'</h2>
+
+    <button onclick="abrirNivel()">
+        Abrir nivel en FNF
+    </button>
+
+    <script>
+        function abrirNivel() {
+            const url = new URL("level.fnfc", window.location.href);
+
+            const enlace = document.createElement("a");
+            enlace.href = url.href;
+            enlace.download = "";
+            enlace.click();
+        }
+    </script>
+
+</body>
+</html>
