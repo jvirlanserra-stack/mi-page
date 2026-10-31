@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ejercicio 3</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: white;
+      color: #383838;
+      font-family: Arial, sans-serif;
+    }
+
+    .contenedor {
+      width: 100%;
+      max-width: 1267px;
+      margin: auto;
+      padding: 25px 29px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: normal;
+      margin: 0 0 35px;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #d1d1d1;
+      margin: 0 -29px 33px;
+    }
+
+    .instrucciones {
+      font-size: 20px;
+      margin-bottom: 28px;
+    }
+
+    .ejercicio {
+      font-size: 17px;
+      line-height: 25px;
+      color: #111;
+    }
+
+    .pregunta {
+      position: relative;
+      padding-left: 12px;
+      margin-bottom: 22px;
+    }
+
+    .pregunta::before {
+      content: "";
+      position: absolute;
+      left: -5px;
+      top: 9px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #111;
+    }
+
+    .hueco {
+      display: inline-block;
+      width: 135px;
+      height: 24px;
+      background: #e5e6e8;
+      border-radius: 6px;
+      vertical-align: middle;
+      text-align: center;
+      color: #555;
+      font-size: 14px;
+      line-height: 24px;
+    }
+
+    .banco {
+      margin: 15px 0 0 38px;
+      width: 790px;
+      max-width: 100%;
+      min-height: 151px;
+      padding: 18px;
+      border-radius: 7px;
+      background: #dedede;
+      display: flex;
+      flex-wrap: wrap;
+      align-content: space-between;
+      align-items: center;
+      gap: 22px 20px;
+      color: #111;
+      font-size: 17px;
+    }
+
+    .palabra {
+      white-space: nowrap;
+    }
+
+    @media (max-width: 700px) {
+      .contenedor {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+
+      .ejercicio {
+        line-height: 30px;
+      }
+
+      .banco {
+        margin-left: 0;
+        gap: 15px;
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <button onclick="window.location.href='../'"><a href="../">← Volver</a></button>
+
+  <div class="contenedor">
+
+    <h1>La teoría cinética y los gases</h1>
+
+    <hr>
+
+    <div class="instrucciones">
+      Completa con las palabras adecuadas, basándote en la teoría cinética.
+    </div>
+
+    <div class="ejercicio">
+
+      <div class="pregunta">
+        En el estado gaseoso, las fuerzas entre las partículas son tan
+        <span class="hueco"></span>
+        que se mueven con total
+        <span class="hueco"></span>
+        por todo el recipiente.
+      </div>
+
+      <div class="pregunta">
+        Tienen forma y volumen
+        <span class="hueco"></span>.
+        Como las fuerzas entre sus partículas son muy
+        <span class="hueco"></span>,
+        las partículas se mueven por todo el recipiente.
+        Si cambia la
+        <span class="hueco"></span>
+        o el
+        <span class="hueco"></span>
+        del recipiente, también cambia la forma o el volumen del
+        <span class="hueco"></span>.
+      </div>
+
+      <div class="pregunta">
+        Se expanden y se
+        <span class="hueco"></span>.
+        Si aumenta el volumen del recipiente, los gases tendrán
+        <span class="hueco"></span>
+        espacio para moverse, por eso se expanden.
+        Si se
+        <span class="hueco"></span>
+        el volumen, las partículas se pueden acercar más y se comprimen.
+      </div>
+
+      <div class="pregunta">
+        La densidad de los gases suele ser muy
+        <span class="hueco"></span>
+        porque sus partículas están mucho más
+        <span class="hueco"></span>
+        que en los sólidos o los líquidos.
+      </div>
+
+    </div>
+    <div id="contenedor-banco">
+      <div class="banco">
+
+        <span ondblclick="this.remove()" class="palabra">constantes</span>
+        <span ondblclick="this.remove()" class="palabra">reduce</span>
+        <span ondblclick="this.remove()" class="palabra">forma</span>
+        <span ondblclick="this.remove()" class="palabra">libertad</span>
+        <span ondblclick="this.remove()" class="palabra">alta</span>
+        <span ondblclick="this.remove()" class="palabra">densidad</span>
+        <span ondblclick="this.remove()" class="palabra">dilatan</span>
+        <span ondblclick="this.remove()" class="palabra">variables</span>
+
+        <span ondblclick="this.remove()" class="palabra">juntas</span>
+        <span ondblclick="this.remove()" class="palabra">aumenta</span>
+        <span ondblclick="this.remove()" class="palabra">débiles</span>
+        <span ondblclick="this.remove()" class="palabra">fuertes</span>
+        <span ondblclick="this.remove()" class="palabra">débiles</span>
+        <span ondblclick="this.remove()" class="palabra">gas</span>
+        <span ondblclick="this.remove()" class="palabra">separadas</span>
+        <span ondblclick="this.remove()" class="palabra">volumen</span>
+
+        <span ondblclick="this.remove()" class="palabra">comprimen</span>
+        <span ondblclick="this.remove()" class="palabra">más</span>
+        <span ondblclick="this.remove()" class="palabra">tamaño</span>
+        <span ondblclick="this.remove()" class="palabra">baja</span>
+        <span ondblclick="this.remove()" class="palabra">menos</span>
+
+      </div>
+      <br>
+      <br>
+      <button ondblclick="if (confirm('¿SEGUR@ DE BORRAR EL BANCO DE PALABRAS?')) {
+    if (confirm('¿SEGURÍSIMO?')) {
+      document.getElementById('contenedor-banco').innerHTML = ''
+    }
+  }">BORRAR BANCO DE PALABRAS</button>
+    </div>
+  </div>
+
+  <script>
+    let e = 0;
+    let h = 0;
+    function addEvent() {
+      const elemento = document.querySelector(`body > div > div.ejercicio > div:nth-child(${e}) > span:nth-child(${h})`)
+      elemento.addEventListener("click", function () {
+        elemento.innerText = prompt("Nuevo texto:")
+      });
+    }
+    function nextline() {
+      e++;
+      h = 0;
+    }
+    function nextgap() {
+      h++
+      addEvent();
+    }
+    function addevents(array) {
+      e = 0;
+      for (let index = 0; index < array.length; index++) {
+        e++;
+        for (let i = 0; i < array[index]; i++) {
+          h = i;
+          h++
+          addEvent();
+        }
+      }
+    }
+
+    addevents([2, 5, 3, 2]);
+  </script>
+
+</body>
+
+</html>

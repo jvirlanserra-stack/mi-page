@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ejercicio 1</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: white;
+      color: #383838;
+      font-family: Arial, sans-serif;
+    }
+
+    .contenedor {
+      width: 100%;
+      max-width: 1267px;
+      margin: auto;
+      padding: 25px 29px;
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: normal;
+      margin: 0 0 35px;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #d1d1d1;
+      margin: 0 -29px 33px;
+    }
+
+    .instrucciones {
+      font-size: 20px;
+      margin-bottom: 28px;
+    }
+
+    .ejercicio {
+      font-size: 17px;
+      line-height: 25px;
+      color: #111;
+    }
+
+    .pregunta {
+      position: relative;
+      padding-left: 12px;
+      margin-bottom: 22px;
+    }
+
+    .pregunta::before {
+      content: "";
+      position: absolute;
+      left: -5px;
+      top: 9px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #111;
+    }
+
+    .hueco {
+      display: inline-block;
+      width: 144px;
+      height: 24px;
+      background: #e5e6e8;
+      border-radius: 6px;
+      vertical-align: middle;
+      text-align: center;
+      color: #555;
+      font-size: 14px;
+      line-height: 24px;
+    }
+
+    .banco {
+      margin: 15px 0 0 38px;
+      width: 790px;
+      max-width: 100%;
+      min-height: 133px;
+      padding: 18px;
+      border-radius: 7px;
+      background: #dedede;
+      display: flex;
+      flex-wrap: wrap;
+      align-content: space-between;
+      align-items: center;
+      gap: 22px 20px;
+      color: #111;
+      font-size: 17px;
+    }
+
+    .palabra {
+      white-space: nowrap;
+    }
+
+    @media (max-width: 700px) {
+      .contenedor {
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+
+      .ejercicio {
+        line-height: 30px;
+      }
+
+      .banco {
+        margin-left: 0;
+        gap: 15px;
+        justify-content: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <button onclick="window.location.href='../'"><a href="../">← Volver</a></button>
+
+  <div class="contenedor">
+
+    <h1>La teoría cinética y los sólidos</h1>
+
+    <hr>
+
+    <div class="instrucciones">
+      Completa con las palabras adecuadas, basándote en la teoría cinética.
+    </div>
+
+    <div class="ejercicio">
+
+      <div class="pregunta">
+        En los sólidos, las partículas están
+        <span class="hueco"></span>
+        unidas, formando una estructura
+        <span class="hueco"></span>.
+        Solo tienen un pequeño movimiento de
+        <span class="hueco"></span>,
+        que <span class="hueco"></span>
+        cuando el cuerpo se calienta y
+        <span class="hueco"></span>
+        cuando el cuerpo se enfría.
+      </div>
+
+      <div class="pregunta">
+        Tienen forma y volumen
+        <span class="hueco"></span>.
+        Las fuerzas existentes entre las partículas hacen que mantengan su posición.
+        Por eso, no cambia la
+        <span class="hueco"></span>
+        ni el <span class="hueco"></span>
+        aunque llevemos el sólido de un sitio a otro.
+      </div>
+
+      <div class="pregunta">
+        No se <span class="hueco"></span>
+        ni se comprimen. Las fuerzas entre las partículas impiden que se
+        <span class="hueco"></span>
+        (por eso, no se expanden). Hay
+        <span class="hueco"></span>
+        espacio entre las partículas; así, es difícil que se aproximen
+        (no se <span class="hueco"></span>).
+      </div>
+
+      <div class="pregunta">
+        La <span class="hueco"></span>
+        de los sólidos suele ser
+        <span class="hueco"></span>
+        que la de los líquidos y los gases porque sus partículas están
+        <span class="hueco"></span>
+        próximas.
+      </div>
+
+      <div class="pregunta">
+        Los sólidos se <span class="hueco"></span>
+        al aumentar la temperatura. Al
+        <span class="hueco"></span>
+        el movimiento de vibración, aumenta la distancia entre las partículas
+        y, en consecuencia, aumenta el
+        <span class="hueco"></span>
+        del sólido. Cuando disminuye la temperatura, ocurre lo
+        <span class="hueco"></span>
+        contrario. Se dice que el cuerpo se contrae.
+      </div>
+
+    </div>
+
+    <div id="contenedor-banco">
+      <div class="banco">
+
+        <span ondblclick="this.remove()" class="palabra">comprimen</span>
+        <span ondblclick="this.remove()" class="palabra">fuertemente</span>
+        <span ondblclick="this.remove()" class="palabra">forma</span>
+        <span ondblclick="this.remove()" class="palabra">más</span>
+        <span ondblclick="this.remove()" class="palabra">contrario</span>
+        <span ondblclick="this.remove()" class="palabra">aumenta</span>
+        <span ondblclick="this.remove()" class="palabra">tamaño</span>
+
+        <span ondblclick="this.remove()" class="palabra">aumentar</span>
+        <span ondblclick="this.remove()" class="palabra">poco</span>
+        <span ondblclick="this.remove()" class="palabra">rígida</span>
+        <span ondblclick="this.remove()" class="palabra">densidad</span>
+        <span ondblclick="this.remove()" class="palabra">vibración</span>
+        <span ondblclick="this.remove()" class="palabra">mayor</span>
+        <span ondblclick="this.remove()" class="palabra">separen</span>
+        <span ondblclick="this.remove()" class="palabra">dilatan</span>
+
+        <span ondblclick="this.remove()" class="palabra">constantes</span>
+        <span ondblclick="this.remove()" class="palabra">volumen</span>
+        <span ondblclick="this.remove()" class="palabra">disminuye</span>
+        <span ondblclick="this.remove()" class="palabra">expanden</span>
+
+      </div>
+      <br>
+      <br>
+      <button onclick="this.parentElement.remove();">BORRAR BANCO DE PALABRAS</button>
+    </div>
+
+  </div>
+
+  <script>
+    let e = 0;
+    let h = 0;
+    function addEvent() {
+      const elemento = document.querySelector(`body > div > div.ejercicio > div:nth-child(${e}) > span:nth-child(${h})`)
+      elemento.addEventListener("click", function () {
+        elemento.innerText = prompt("Nuevo texto:")
+      });
+    }
+    function nextline() {
+      e++;
+      h = 0;
+    }
+    function nextgap() {
+      h++
+      addEvent();
+    }
+    function addevents(array) {
+      e = 0;
+      for (let index = 0; index < array.length; index++) {
+        e++;
+        for (let i = 0; i < array[index]; i++) {
+          h = i;
+          h++
+          addEvent();
+        }
+      }
+    }
+
+    addevents([5, 3, 4, 3, 4]);
+  </script>
+
+</body>
+
+</html>
