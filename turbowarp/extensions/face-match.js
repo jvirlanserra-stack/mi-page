@@ -14,7 +14,17 @@
                     name: 'Face Match',
                     blocks: [
                         { opcode: 'getDescriptorFromUrl', text: 'obtener descriptor de [URL]', blockType: Scratch.BlockType.REPORTER, arguments: { URL: { type: 'string', defaultValue: 'https://ejemplo.com/foto.jpg' } } },
-                        { opcode: 'compare', text: 'distancia entre [D1] y [D2]', blockType: Scratch.BlockType.REPORTER, arguments: { D1: { type: 'string' }, D2: { type: 'string' } } }
+                        { opcode: 'compare', text: 'distancia entre [D1] y [D2]', blockType: Scratch.BlockType.REPORTER, arguments: { D1: { type: 'string' }, D2: { type: 'string' } } },
+                        { 
+    opcode: 'mergeDescriptors', 
+    text: 'fusionar descriptors de [D1] y [D2]', 
+    blockType: Scratch.BlockType.REPORTER, 
+    arguments: { 
+        D1: { type: 'string' }, 
+        D2: { type: 'string' } 
+    } 
+}
+
                     ]
                 };
             }
@@ -30,6 +40,24 @@
                     return faceapi.euclideanDistance(new Float32Array(JSON.parse(D1)), new Float32Array(JSON.parse(D2)));
                 } catch (e) { return 1; }
             }
+
+            mergeDescriptors({ D1, D2 }) {
+    try {
+        const arrayA = JSON.parse(D1);
+        const arrayB = JSON.parse(D2);
+
+        // Comprueba si existen y si miden exactamente lo mismo (128 dimensiones)
+        if (arrayA && arrayB && arrayA.length === arrayB.length) {
+            const fusion = arrayA.map((valor, indice) => (valor + arrayB[indice]) / 2);
+            return JSON.stringify(fusion); // Devuelve la cara fusionada en formato JSON de Scratch
+        } else {
+            return "Los vectores de las caras deben existir y tener la misma longitud.";
+        }
+    } catch (e) { 
+        return "Los vectores de las caras deben existir y tener la misma longitud."; 
+    }
+}
+
         }
         Scratch.extensions.register(new FaceMatch());
     };
