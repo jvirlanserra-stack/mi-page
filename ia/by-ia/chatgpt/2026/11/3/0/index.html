@@ -18,6 +18,12 @@ input{width:100%;padding:12px;border:1px solid GrayText;border-radius:10px;font:
 button{border:0;border-radius:10px;padding:12px 18px;font:inherit;font-weight:700;cursor:pointer;background:#2563eb;color:white}
 button.secondary{background:#475569}
 button:focus-visible,input:focus-visible{outline:3px solid #60a5fa;outline-offset:3px}
+#export-dialog{width:min(560px,calc(100% - 32px));max-height:80vh;overflow:auto;border:1px solid GrayText;border-radius:14px;padding:22px;background:Canvas;color:CanvasText}
+#export-dialog::backdrop{background:#0009}
+#export-dialog h2{margin-top:0}
+.history-options{display:grid;gap:10px;margin:18px 0}
+.history-option{display:flex;grid-template-columns:none;align-items:flex-start;gap:10px;padding:12px;border:1px solid GrayText;border-radius:10px;cursor:pointer}
+.history-option input{width:auto;margin:3px 0 0}
 #status{min-height:1.5em;margin:14px 0}
 .output-wrap{margin-top:18px;border:1px solid GrayText;border-radius:12px;overflow:hidden}
 .output-heading{padding:12px 16px;font-weight:700;border-bottom:1px solid GrayText}
@@ -49,6 +55,18 @@ kbd{display:inline-block;padding:2px 7px;border:1px solid GrayText;border-radius
     <input id="import-file" type="file" accept=".json,application/json" hidden>
   </div>
 
+  <dialog id="export-dialog" aria-labelledby="export-title">
+    <form method="dialog">
+      <h2 id="export-title">¿Qué historial quieres exportar?</h2>
+      <p>Elige una sesión. La exportación incluirá todas sus cadenas.</p>
+      <div id="export-options" class="history-options"></div>
+      <div class="buttons">
+        <button class="secondary" value="cancel">Cancelar</button>
+        <button id="confirm-export" type="button">Exportar seleccionado</button>
+      </div>
+    </form>
+  </dialog>
+
   <p id="status" role="status" aria-live="polite">Introduce las filas y columnas. Después pulsa Generar o G.</p>
 
   <section class="output-wrap" aria-label="Resultado generado">
@@ -79,9 +97,13 @@ const copyButton = document.getElementById("copy");
 const exportButton = document.getElementById("export");
 const importButton = document.getElementById("import");
 const importFile = document.getElementById("import-file");
+const exportDialog = document.getElementById("export-dialog");
+const exportOptions = document.getElementById("export-options");
+const confirmExportButton = document.getElementById("confirm-export");
 
 let copyMatrix = "";
-let history = [];
+let historySessions = [];
+let activeSession = null;
 let currentChain = "";
 let groupRows = 0;
 let groupCols = 0;
@@ -106,11 +128,12 @@ function generate() {
     return false;
   }
 
-  if (groupRows !== rows || groupCols !== cols) {
-    history = [];
-    groupRows = rows;
-    groupCols = cols;
+  if (!activeSession || activeSession.rows !== rows || activeSession.cols !== cols) {
+    activeSession = { rows, cols, chains: [], createdAt: new Date() };
+    historySessions.push(activeSession);
   }
+  groupRows = rows;
+  groupCols = cols;
 
   const generatedRows = [];
   for (let r = 0; r < rows; r++) {
@@ -119,7 +142,7 @@ function generate() {
     generatedRows.push(row.join(""));
   }
   currentChain = generatedRows.join("");
-  history.push(currentChain);
+  activeSession.chains.push(currentChain);
 
   renderRows();
   status.textContent = `Generadas ${rows} fila(s) de ${cols} columna(s).`;
@@ -137,20 +160,65 @@ function renderRows() {
   copyMatrix = rows.map(row => row.split("").join("\t")).join("\r\n");
 }
 
-function exportGroup() {
-  if (history.length === 0) {
-    status.textContent = "Primero genera o importa un historial.";
+function openExportDialog() {
+  if (historySessions.length === 0) {
+    status.textContent = "Todavía no hay historiales para exportar.";
     return;
   }
-  const data = JSON.stringify([[groupRows, groupCols], history], null, 2);
+
+  exportOptions.replaceChildren();
+  const occurrences = new Map();
+  historySessions.forEach((session, index) => {
+    const key = `${session.rows}x${session.cols}`;
+    if (!occurrences.has(key)) occurrences.set(key, []);
+    occurrences.get(key).push({ session, index });
+  });
+
+  const labels = new Map();
+  for (const [key, items] of occurrences) {
+    items.forEach(({ session, index }, position) => {
+      const time = session.createdAt.toLocaleString("es-ES", {
+        day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit"
+      });
+      let age = "";
+      if (items.length > 1) {
+        if (position === 0) age = " · más antiguo";
+        else if (position === items.length - 1) age = " · más reciente";
+        else age = ` · ${position + 1}.º más antiguo`;
+      }
+      labels.set(index, `${session.rows} filas × ${session.cols} columnas${age} · ${time} · ${session.chains.length} cadena(s)`);
+    });
+  }
+
+  historySessions.forEach((session, index) => {
+    const label = document.createElement("label");
+    label.className = "history-option";
+    const radio = document.createElement("input");
+    radio.type = "radio";
+    radio.name = "history-choice";
+    radio.value = String(index);
+    radio.checked = index === historySessions.length - 1;
+    label.append(radio, document.createTextNode(labels.get(index)));
+    exportOptions.appendChild(label);
+  });
+  exportDialog.showModal();
+}
+
+function exportSession(index) {
+  const session = historySessions[index];
+  if (!session) {
+    status.textContent = "Selecciona un historial para exportar.";
+    return;
+  }
+  const data = JSON.stringify([[session.rows, session.cols], session.chains], null, 2);
   const blob = new Blob([data], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "cadenas-binarias.json";
+  link.download = `cadenas-binarias-${session.rows}x${session.cols}-${session.createdAt.toISOString().replaceAll(":", "-")}.json`;
   link.click();
-  URL.revokeObjectURL(url);
-  status.textContent = "Grupo exportado como cadenas-binarias.json.";
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  status.textContent = `Exportado el historial de ${session.rows} filas × ${session.cols} columnas (${session.chains.length} cadena(s)).`;
 }
 
 async function importGroup(file) {
@@ -167,14 +235,16 @@ async function importGroup(file) {
     if (strings.some(value => typeof value !== "string" || value.length !== rows * cols || !/^[01]+$/.test(value))) {
       throw new Error("Cada entrada del historial debe ser una cadena continua de exactamente filas × columnas bits.");
     }
-    history = strings.slice();
+    if (strings.length === 0) throw new Error("El historial debe contener al menos una cadena.");
+    activeSession = { rows, cols, chains: strings.slice(), createdAt: new Date() };
+    historySessions.push(activeSession);
     groupRows = rows;
     groupCols = cols;
-    currentChain = history[history.length - 1] || "";
+    currentChain = activeSession.chains[activeSession.chains.length - 1];
     rowsInput.value = rows;
     colsInput.value = cols;
     renderRows();
-    status.textContent = `Importado un historial de ${history.length} cadena(s) de ${rows * cols} bits.`;
+    status.textContent = `Importado un historial de ${activeSession.chains.length} cadena(s) de ${rows * cols} bits.`;
   } catch (error) {
     status.textContent = `No se pudo importar: ${error.message}`;
   }
@@ -218,7 +288,17 @@ rowsInput.addEventListener("change", generate);
 colsInput.addEventListener("change", generate);
 generateButton.addEventListener("click", generate);
 copyButton.addEventListener("click", copyForCanva);
-exportButton.addEventListener("click", exportGroup);
+exportButton.addEventListener("click", openExportDialog);
+confirmExportButton.addEventListener("click", () => {
+  const selected = exportOptions.querySelector('input[name="history-choice"]:checked');
+  if (!selected) {
+    status.textContent = "Elige un historial para exportar.";
+    return;
+  }
+  const index = Number(selected.value);
+  exportDialog.close();
+  exportSession(index);
+});
 importButton.addEventListener("click", () => importFile.click());
 importFile.addEventListener("change", () => {
   if (importFile.files[0]) importGroup(importFile.files[0]);
