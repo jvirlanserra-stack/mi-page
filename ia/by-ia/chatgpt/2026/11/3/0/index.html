@@ -44,6 +44,9 @@ kbd{display:inline-block;padding:2px 7px;border:1px solid GrayText;border-radius
   <div class="buttons">
     <button id="generate" type="button">Generar <kbd>G</kbd></button>
     <button id="copy" class="secondary" type="button">Copiar para Canva <kbd>Alt</kbd>+<kbd>C</kbd></button>
+    <button id="export" class="secondary" type="button">Exportar grupo JSON</button>
+    <button id="import" class="secondary" type="button">Importar grupo JSON</button>
+    <input id="import-file" type="file" accept=".json,application/json" hidden>
   </div>
 
   <p id="status" role="status" aria-live="polite">Introduce las filas y columnas. Después pulsa Generar o G.</p>
@@ -73,8 +76,12 @@ const output = document.getElementById("output");
 const status = document.getElementById("status");
 const generateButton = document.getElementById("generate");
 const copyButton = document.getElementById("copy");
+const exportButton = document.getElementById("export");
+const importButton = document.getElementById("import");
+const importFile = document.getElementById("import-file");
 
 let copyMatrix = "";
+let binaryRows = [];
 
 function generate() {
   if (rowsInput.value.trim() === "" || colsInput.value.trim() === "") {
@@ -96,20 +103,61 @@ function generate() {
     return false;
   }
 
-  const previewLines = [];
-  const matrixLines = [];
-
+  binaryRows = [];
   for (let r = 0; r < rows; r++) {
     const row = Array(cols).fill("0");
     row[Math.floor(Math.random() * cols)] = "1";
-    previewLines.push(row.join("|"));
-    matrixLines.push(row.join("\t"));
+    binaryRows.push(row.join(""));
   }
 
-  output.textContent = previewLines.join("\n");
-  copyMatrix = matrixLines.join("\r\n");
+  renderRows();
   status.textContent = `Generadas ${rows} fila(s) de ${cols} columna(s).`;
   return true;
+}
+
+function renderRows() {
+  output.textContent = binaryRows.map(row => row.split("").join("|")).join("\n");
+  copyMatrix = binaryRows.map(row => row.split("").join("\t")).join("\r\n");
+}
+
+function exportGroup() {
+  if (binaryRows.length === 0) {
+    status.textContent = "Primero genera o importa un grupo.";
+    return;
+  }
+  const data = JSON.stringify([[binaryRows.length, binaryRows[0].length], binaryRows], null, 2);
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "cadenas-binarias.json";
+  link.click();
+  URL.revokeObjectURL(url);
+  status.textContent = "Grupo exportado como cadenas-binarias.json.";
+}
+
+async function importGroup(file) {
+  try {
+    const data = JSON.parse(await file.text());
+    if (!Array.isArray(data) || data.length !== 2 || !Array.isArray(data[0]) || data[0].length !== 2 || !Array.isArray(data[1])) {
+      throw new Error("El JSON debe tener el formato [[filas,columnas],[cadenas...]].");
+    }
+    const [rows, cols] = data[0];
+    const strings = data[1];
+    if (!Number.isInteger(rows) || rows < 1 || rows > 10000 || !Number.isInteger(cols) || cols < 2 || cols > 1000) {
+      throw new Error("Las dimensiones deben ser enteras: 1–10 000 filas y 2–1 000 columnas.");
+    }
+    if (strings.length !== rows || strings.some(value => typeof value !== "string" || value.length !== cols || !/^[01]+$/.test(value))) {
+      throw new Error("Debe haber una cadena binaria por fila, cada una con la longitud indicada.");
+    }
+    binaryRows = strings.slice();
+    rowsInput.value = rows;
+    colsInput.value = cols;
+    renderRows();
+    status.textContent = `Importadas ${rows} cadenas de ${cols} bits.`;
+  } catch (error) {
+    status.textContent = `No se pudo importar: ${error.message}`;
+  }
 }
 
 async function copyForCanva() {
@@ -150,6 +198,12 @@ rowsInput.addEventListener("change", generate);
 colsInput.addEventListener("change", generate);
 generateButton.addEventListener("click", generate);
 copyButton.addEventListener("click", copyForCanva);
+exportButton.addEventListener("click", exportGroup);
+importButton.addEventListener("click", () => importFile.click());
+importFile.addEventListener("change", () => {
+  if (importFile.files[0]) importGroup(importFile.files[0]);
+  importFile.value = "";
+});
 
 document.addEventListener("keydown", (event) => {
   const target = event.target;
