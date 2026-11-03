@@ -30,7 +30,7 @@ kbd{display:inline-block;padding:2px 7px;border:1px solid GrayText;border-radius
 <body>
 <main>
   <h1>Generador de cadenas binarias</h1>
-  <p class="intro">Cada fila contiene exactamente un <code>1</code>. La vista previa separa los números con <code>|</code>.</p>
+  <p class="intro">Cada fila contiene exactamente un <code>1</code>. La vista previa separa las columnas con <code>|</code>; el historial guarda cada generación como una cadena binaria continua.</p>
 
   <section class="controls" aria-label="Configuración">
     <label for="rows">Cantidad de filas (mínimo 1)
@@ -44,8 +44,8 @@ kbd{display:inline-block;padding:2px 7px;border:1px solid GrayText;border-radius
   <div class="buttons">
     <button id="generate" type="button">Generar <kbd>G</kbd></button>
     <button id="copy" class="secondary" type="button">Copiar para Canva <kbd>Alt</kbd>+<kbd>C</kbd></button>
-    <button id="export" class="secondary" type="button">Exportar grupo JSON</button>
-    <button id="import" class="secondary" type="button">Importar grupo JSON</button>
+    <button id="export" class="secondary" type="button">Exportar historial JSON</button>
+    <button id="import" class="secondary" type="button">Importar historial JSON</button>
     <input id="import-file" type="file" accept=".json,application/json" hidden>
   </div>
 
@@ -81,7 +81,10 @@ const importButton = document.getElementById("import");
 const importFile = document.getElementById("import-file");
 
 let copyMatrix = "";
-let binaryRows = [];
+let history = [];
+let currentChain = "";
+let groupRows = 0;
+let groupCols = 0;
 
 function generate() {
   if (rowsInput.value.trim() === "" || colsInput.value.trim() === "") {
@@ -103,12 +106,20 @@ function generate() {
     return false;
   }
 
-  binaryRows = [];
+  if (groupRows !== rows || groupCols !== cols) {
+    history = [];
+    groupRows = rows;
+    groupCols = cols;
+  }
+
+  const generatedRows = [];
   for (let r = 0; r < rows; r++) {
     const row = Array(cols).fill("0");
     row[Math.floor(Math.random() * cols)] = "1";
-    binaryRows.push(row.join(""));
+    generatedRows.push(row.join(""));
   }
+  currentChain = generatedRows.join("");
+  history.push(currentChain);
 
   renderRows();
   status.textContent = `Generadas ${rows} fila(s) de ${cols} columna(s).`;
@@ -116,16 +127,22 @@ function generate() {
 }
 
 function renderRows() {
-  output.textContent = binaryRows.map(row => row.split("").join("|")).join("\n");
-  copyMatrix = binaryRows.map(row => row.split("").join("\t")).join("\r\n");
+  if (!currentChain) {
+    output.textContent = "Todavía no hay ninguna cadena.";
+    copyMatrix = "";
+    return;
+  }
+  const rows = Array.from({ length: groupRows }, (_, index) => currentChain.slice(index * groupCols, (index + 1) * groupCols));
+  output.textContent = rows.map(row => row.split("").join("|")).join("\n");
+  copyMatrix = rows.map(row => row.split("").join("\t")).join("\r\n");
 }
 
 function exportGroup() {
-  if (binaryRows.length === 0) {
-    status.textContent = "Primero genera o importa un grupo.";
+  if (history.length === 0) {
+    status.textContent = "Primero genera o importa un historial.";
     return;
   }
-  const data = JSON.stringify([[binaryRows.length, binaryRows[0].length], binaryRows], null, 2);
+  const data = JSON.stringify([[groupRows, groupCols], history], null, 2);
   const blob = new Blob([data], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -147,14 +164,17 @@ async function importGroup(file) {
     if (!Number.isInteger(rows) || rows < 1 || rows > 10000 || !Number.isInteger(cols) || cols < 2 || cols > 1000) {
       throw new Error("Las dimensiones deben ser enteras: 1–10 000 filas y 2–1 000 columnas.");
     }
-    if (strings.length !== rows || strings.some(value => typeof value !== "string" || value.length !== cols || !/^[01]+$/.test(value))) {
-      throw new Error("Debe haber una cadena binaria por fila, cada una con la longitud indicada.");
+    if (strings.some(value => typeof value !== "string" || value.length !== rows * cols || !/^[01]+$/.test(value))) {
+      throw new Error("Cada entrada del historial debe ser una cadena continua de exactamente filas × columnas bits.");
     }
-    binaryRows = strings.slice();
+    history = strings.slice();
+    groupRows = rows;
+    groupCols = cols;
+    currentChain = history[history.length - 1] || "";
     rowsInput.value = rows;
     colsInput.value = cols;
     renderRows();
-    status.textContent = `Importadas ${rows} cadenas de ${cols} bits.`;
+    status.textContent = `Importado un historial de ${history.length} cadena(s) de ${rows * cols} bits.`;
   } catch (error) {
     status.textContent = `No se pudo importar: ${error.message}`;
   }
