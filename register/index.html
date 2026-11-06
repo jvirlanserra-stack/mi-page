@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <script id="templates" src="/mi-page/assets/templates/import.js"></script>
+    <title>Inicia sesión</title>
+</head>
+
+<body>
+    <p align="right">Ya tengo cuenta</p>
+    <span>Usuario: </span><input id="user" type="text">
+    <br>
+    <br>
+    <span>Contraseña: </span><input type="password" id="pass">
+    <br>
+    <br>
+    <span>Conformar contraseña: </span><input type="password">
+    <br>
+    <br>
+    <button onclick="login();">Crear cuenta</button>
+    <script>
+        import { hash } from "/mi-page/assets/scripts/exports.js";
+        import { upload } from "/mi-page/assets/scripts/exports.js";
+        document.querySelector("body > p").addEventListener("click", () => {
+            window.location.href = "/mi-page/login"
+        })
+
+        async function login() {
+            const datos = await (await fetch("/mi-page/users.json")).json();
+            const user = document.getElementById(user).value;
+            if (!(user in datos)) {
+                const password = hash(document.getElementById("pass").value);
+                if (datos[user] = password) {
+                    try {
+                        upload("users.json",datos[user]=password);
+                        alert("¡Has creado una cuenta exitosamente!");
+                    } catch (e) {
+                        console.error("ERROR: " + e);
+                        alert("Ha habido un error.");
+                    }
+                }
+            } else {
+                alert("Ese usuario ya existe. Vuelve a intentarlo de nuevo.");
+            }
+        }
+    </script>
+</body>
+
+</html>

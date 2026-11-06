@@ -27,10 +27,16 @@
             const user = document.getElementById(user).value;
             if (user in datos) {
                 const password = document.getElementById("pass").value;
-                const hash = hash(password);
-                if (datos[user] = hash) {
-                    alert("¡Has iniciado sesión!")
-                    sessionStorage.setItem("logged-in", [user, document.getElementById("pass").value]);
+                const hashpass = hash(password);
+                if (datos[user] = hashpass) {
+                    try {
+                        sessionStorage.setItem("logged-in", [user, password]);
+                        alert("¡Has iniciado sesión exitosamente!");
+                    } catch (e) {
+                        console.error("ERROR: " + e);
+                        alert("Ha habido un error.");
+                    }
+                    
                 }
             } else {
                 alert("Ese usuario no existe. Vuelve a intentarlo de nuevo.");
