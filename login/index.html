@@ -17,7 +17,7 @@
     <button onclick="login()">Crea una cuenta</button>
     <script>
         import { hash } from "/mi-page/assets/scripts/exports.js";
-        import { upload } from "/mi-page/assets/scripts/exports.js";
+        import { verify } from "/mi-page/assets/scripts/exports.js";
         document.querySelector("body > p").addEventListener("click", () => {
             window.location.href = "/mi-page/register"
         })
@@ -27,8 +27,7 @@
             const user = document.getElementById(user).value;
             if (user in datos) {
                 const password = document.getElementById("pass").value;
-                const hashpass = hash(password);
-                if (datos[user] = hashpass) {
+                if (verify(password, datos[user])) {
                     try {
                         sessionStorage.setItem("logged-in", [user, password]);
                         alert("¡Has iniciado sesión exitosamente!");
