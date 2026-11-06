@@ -17,7 +17,7 @@
     <span>Conformar contraseña: </span><input type="password">
     <br>
     <br>
-    <button onclick="login();">Crear cuenta</button>
+    <button onclick="register();">Crear cuenta</button>
     <script>
         import { hash } from "/mi-page/assets/scripts/exports.js";
         import { upload } from "/mi-page/assets/scripts/exports.js";
@@ -25,7 +25,7 @@
             window.location.href = "/mi-page/login"
         })
 
-        async function login() {
+        async function register() {
             const datos = await (await fetch("/mi-page/users.json")).json();
             const user = document.getElementById(user).value;
             if (!(user in datos)) {
