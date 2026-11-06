@@ -8,14 +8,34 @@
 
 <body>
     <p align="right">No tengo cuenta</p>
-    <span>Usuario: </span><input type="text"></input>
+    <span>Usuario: </span><input id="user" type="text">
     <br>
-    <span>Contraseña: </span><input type="password"></input>
-
+    <br>
+    <span>Contraseña: </span><input type="password" id="pass">
+    <br>
+    <br>
+    <button onclick="login();">Iniciar sesión</button>
     <script>
+        import { hash } from "/mi-page/assets/scripts/exports.js";
+        import { upload } from "/mi-page/assets/scripts/exports.js";
         document.querySelector("body > p").addEventListener("click", () => {
             window.location.href = "/mi-page/register"
         })
+
+        async function login() {
+            const datos = await (await fetch("/mi-page/users.json")).json();
+            const user = document.getElementById(user).value;
+            if (user in datos) {
+                const password = document.getElementById("pass").value;
+                const hash = hash(password);
+                if (datos[user] = hash) {
+                    alert("¡Has iniciado sesión!")
+                    sessionStorage.setItem("logged-in", [user, document.getElementById("pass").value]);
+                }
+            } else {
+                alert("Ese usuario no existe. Vuelve a intentarlo de nuevo.");
+            }
+        }
     </script>
 </body>
 
