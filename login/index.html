@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <script id="templates" src="/mi-page/assets/templates/import.js"></script>
+    <title>Inicia sesión</title>
+</head>
+
+<body>
+    <p align="right">No tengo cuenta</p>
+    <span>Usuario: </span><textarea name="user" id="user"></textarea>
+    <br>
+    <span>Contraseña: </span><input type="password"></input>
+
+    <script>
+        document.querySelector("body > p").addEventListener("click", () => {
+            window.location.href = "/mi-page/register"
+        })
+    </script>
+</body>
+
+</html>

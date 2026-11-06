@@ -1,4 +1,5 @@
-!DOCTYPE html><html lang="es">
+<!DOCTYPE html>
+<html lang="es">
 
 <head>
     <script id="templates" src="/mi-page/assets/templates/import.js"></script>
@@ -10,7 +11,9 @@
     <h1><a href="games/">Entra a mis juegos</a></h1>
 
     <script>
-        document.querySelector("body > p").addEventListener("click") 
+        document.querySelector("body > p").addEventListener("click", () => {
+            window.location.href = "/mi-page/login"
+        })
     </script>
 </body>
 
