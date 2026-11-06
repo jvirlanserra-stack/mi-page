@@ -7,7 +7,7 @@
 </head>
 
 <body>
-    <p align="right">Ya tengo cuenta</p>
+    <p onclick="window.location.href = '/mi-page/login'" align="right">Ya tengo cuenta</p>
     <span>Usuario: </span><input id="user" type="text">
     <br>
     <br>
@@ -21,9 +21,6 @@
     <script>
         import { hash } from "/mi-page/assets/scripts/exports.js";
         import { upload } from "/mi-page/assets/scripts/exports.js";
-        document.querySelector("body > p").addEventListener("click", () => {
-            window.location.href = "/mi-page/login"
-        })
 
         async function register() {
             const datos = await (await fetch("/mi-page/users.json")).json();
