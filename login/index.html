@@ -14,12 +14,12 @@
     <span>Contraseña: </span><input type="password" id="pass">
     <br>
     <br>
-    <button onclick="login()">Crea una cuenta</button>
+    <button id="login">Iniciar sesión</button>
     <script>
         import { hash } from "https://jvirlanserra-stack.github.io//mi-page/assets/scripts/exports.js";
         import { verify } from "https://jvirlanserra-stack.github.io//mi-page/assets/scripts/exports.js";
 
-        async function login() {
+        document.getElementById("login").addEventListener("click", async () => {
             const datos = await (await fetch("/mi-page/users.json")).json();
             const user = document.getElementById(user).value;
             if (user in datos) {
@@ -32,12 +32,12 @@
                         console.error("ERROR: " + e);
                         alert("Ha habido un error.");
                     }
-                    
+
                 }
             } else {
                 alert("Ese usuario no existe. Vuelve a intentarlo de nuevo.");
             }
-        }
+        })
     </script>
 </body>
 
