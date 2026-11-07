@@ -1,0 +1,53 @@
+<html lang="es">
+
+<head>
+    <title>clicker</title>
+</head>
+
+<body>
+    <div>
+
+        <button onclick="clic();">
+            ¡Haz clic en mí!<br><img
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQdL3VtEinUmaE134RkTj7E1Y00PLQaALTvQRfKiGWcRg&s=10"
+                width="100" height="100" id="cookie">
+        </button>
+        <span id="texto">Puntos: 0</span>
+
+        <br>
+        <br>
+
+        <button onclick="upg0fnc();" id="upg0">+1 punto/clic (1pt, level 1)</button>
+        <!--<button onclick="upg1fnc();"></button>-->
+
+    </div>
+    <script>
+
+        let puntos = 0;
+        let upg0 = 0;
+        let upg1 = 0;
+
+        function dibujar(id, dibujo) {
+            document.getElementById(id).innerHTML = dibujo;
+        }
+
+        function clic() {
+            puntos += upg0 + 1;
+            dibujar("texto", `Puntos: ${puntos}`);
+        }
+
+        function upg0fnc() {
+            if (puntos >= 2 ** upg0) {
+                puntos -= 2 ** upg0;
+                upg0++;
+                dibujar("texto", `Puntos: ${puntos}`);
+                dibujar("upg0", `+1 punto/clic (${2 ** upg0}pt, level${upg0 + 1})`);
+            }
+        }
+
+        function upg1fnc() { }
+
+    </script>
+</body>
+
+</html>

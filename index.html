@@ -7,13 +7,16 @@
 </head>
 
 <body>
-    <p align="right">Inicia sesión</p>
-    <h1><a href="games/">Entra a mis juegos</a></h1>
+    <div>
+        <!--<p align="right">Inicia sesión</p>-->
+        <h1 id="games">Entra a mis juegos</h1>
+        <a href="games/clicker">Cookie clicker cutre</a>
+    </div>
+
 
     <script>
-        document.querySelector("body > p").addEventListener("click", () => {
-            window.location.href = "/mi-page/login"
-        })
+        document.querySelector("body > div > p").addEventListener("click", () => {window.location.href = "/mi-page/login"})
+        document.getElementById("games").addEventListener("click", () => {window.location.href="games"})
     </script>
 </body>
 
