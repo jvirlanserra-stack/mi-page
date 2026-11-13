@@ -22,18 +22,19 @@
     </div>
     <script>
 
-const eldiv = document.getElementById("thediv");
-                                let puntos = 0;
-                                let upg0 = 0;
-                                let upg1 = 0;
+        const eldiv = document.getElementById("thediv");
+        
+        let puntos = 0;
+        let upg0 = 0;
+        let upg1 = 0;
 
-eldiv.style.transform = `scale(${Math.min(
-    window.innerWidth,
-    window.innerHeight
-) / Math.min(
-    eldiv.getBoundingClientRect().width,
-    eldiv.getBoundingClientRect().height
-) })`;
+//eldiv.style.transform = `scale(${Math.min(
+//    window.innerWidth,
+//    window.innerHeight
+//) / Math.min(
+//    eldiv.getBoundingClientRect().width,
+//    eldiv.getBoundingClientRect().height
+//) })`;
 
                                 function dibujar(id, dibujo) {
                                     document.getElementById(id).innerHTML = dibujo;
