@@ -22,32 +22,38 @@
     </div>
     <script>
 
-                const eldiv= document.getElementById("thediv")
-                let puntos = 0;
-                let upg0 = 0;
-                let upg1 = 0;
+const eldiv = document.getElementById("thediv");
+                                let puntos = 0;
+                                let upg0 = 0;
+                                let upg1 = 0;
 
-                div.style.transform= `scale(${Math.min(window.innerWidth,window.innerHeight)})`
+eldiv.style.transform = `scale(${Math.min(
+    window.innerWidth,
+    window.innerHeight
+) / Math.min(
+    eldiv.getBoundingClientRect().width,
+    eldiv.getBoundingClientRect().height
+) })`;
 
-                function dibujar(id, dibujo) {
-                    document.getElementById(id).innerHTML = dibujo;
-                }
+                                function dibujar(id, dibujo) {
+                                    document.getElementById(id).innerHTML = dibujo;
+                                }
 
-                function clic() {
-                    puntos += upg0 + 1;
-                    dibujar("texto", `Puntos: ${puntos}`);
-                }
+                                function clic() {
+                                    puntos += upg0 + 1;
+                                    dibujar("texto", `Puntos: ${puntos}`);
+                                }
 
-                function upg0fnc() {
-                    if (puntos >= 2 ** upg0) {
-                        puntos -= 2 ** upg0;
-                        upg0++;
-                        dibujar("texto", `Puntos: ${puntos}`);
-                        dibujar("upg0", `+1 punto/clic (${2 ** upg0}pt, level${upg0 + 1})`);
-                    }
-                }
+                                function upg0fnc() {
+                                    if (puntos >= 2 ** upg0) {
+                                        puntos -= 2 ** upg0;
+                                        upg0++;
+                                        dibujar("texto", `Puntos: ${puntos}`);
+                                        dibujar("upg0", `+1 punto/clic (${2 ** upg0}pt, level${upg0 + 1})`);
+                                    }
+                                }
 
-                function upg1fnc() { }
+                                function upg1fnc() { }
 
     </script>
 </body>
